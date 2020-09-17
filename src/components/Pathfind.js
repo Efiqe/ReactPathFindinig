@@ -1,11 +1,13 @@
 import React, { Component, useState, useEffect } from 'react'
+// import uniqueId from 'react-html-id'
 import Node from './Node';
 import './Pathfind.css';
 
 const cols = 45;
 const rows = 20;
+let idCounter = 0;
 
-const Pathfind = () => {
+const Pathfind = (props) => {
     const [Grid, setGrid] = useState([]);
 
     useEffect(() => {
@@ -46,8 +48,9 @@ const Pathfind = () => {
                 return (
                     <div key={rowIndex} className='rowWrapper'>
                         {row.map((col, colIndex) => {
+                            idCounter++;
                             return (
-                                <Node key={colIndex} />
+                                <Node key={colIndex} myID={'id-' + (idCounter - 900).toString()} />
                             )
                         })}
                     </div>

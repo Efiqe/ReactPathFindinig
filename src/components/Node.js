@@ -1,9 +1,9 @@
 import React from 'react';
 import './Node.css'
 
-const Node = () => {
+const Node = (props) => {
     return (
-        <div className='node'>
+        <div className='node' id={props.myID}>
 
         </div>
     )
