@@ -4,6 +4,10 @@
     border: 1px solid black;
 }
 
-#id-1 {
+.node_start {
     background-color: green;
+}
+
+.node_end {
+    background-color: red;
 }
