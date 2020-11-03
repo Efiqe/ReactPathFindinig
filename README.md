@@ -1,2 +1,2 @@
-Pathfinding with ReactJS
+# Pathfinding with ReactJS #
 Funknci BFS algoritmus
