@@ -11,3 +11,11 @@
 .node_end {
     background-color: red;
 }
+
+.node_searched  {
+    background-color: blue;
+}
+
+.node_path {
+    background-color: deeppink;
+}
