@@ -38,8 +38,8 @@ const Pathfind = () => {
         }
 
         if (wallCords.length > 0 && deleteWallCords.length === 0) {
+            console.log("first if is used")
             wall.push(wallCords);
-            console.log(deleteWallCords.length)
 
             wall.forEach((el, idx) => {
                 if (el.length > 0) {
@@ -51,15 +51,13 @@ const Pathfind = () => {
         }
 
         if (deleteWallCords.length > 0) {
+            console.log("second if is used")
             let delY = deleteWallCords[0]
             let delX = deleteWallCords[1]
-            setDeleteWallCords([]);
             let index;
-            console.log(wall)
 
             wall.forEach((el, idx) => {
                 if (el.length > 0) {
-                    console.log(grid[el[0]][el[1]].isWall)
                     if (grid[el[0]][el[1]].isWall === false) {
                         grid[el[0]][el[1]].isWall = true;
                     }
@@ -77,8 +75,6 @@ const Pathfind = () => {
             if (wall[index] !== undefined) {
                 wall[index].splice(0, 2);
             }
-
-            setDeleteWallCords([]);
         }
 
         let start = grid[START_ROW][START_COL];
