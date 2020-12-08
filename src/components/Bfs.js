@@ -4,6 +4,7 @@ function Node(y, x) {
     this.y = y;
     this.x = x;
     this.searched = false;
+    this.isWall = false;
 }
 
 function equal(a, b) {
@@ -75,7 +76,7 @@ export const BFS = (grid, start, end) => {
 
             neighbors.forEach(el => {
                 let mem = grid[el.y][el.x];
-                if (grid[el.y][el.x].searched === false) {
+                if (grid[el.y][el.x].searched === false && grid[el.y][el.x].isWall === false) {
                     mem.searched = true;
                     queue.push(mem);
                     dict[[el.y, el.x]] = [current.y, current.x];
@@ -87,7 +88,7 @@ export const BFS = (grid, start, end) => {
     return dict;
 };
 
-export const showPath = (dict, start, end) => {
+export const drawPath = (dict, start, end) => {
     let curPos = end;
     const result = [];
 
@@ -99,6 +100,8 @@ export const showPath = (dict, start, end) => {
 
     result.push(start);
     let path = result.reverse();
+    path.shift();
+    path.pop();
 
     // console.log(path[0][0])
     // console.log(path[0][1])

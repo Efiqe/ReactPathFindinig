@@ -19,3 +19,7 @@
 .node_path {
     background-color: deeppink;
 }
+
+.node_wall {
+    background-color: black;
+}
