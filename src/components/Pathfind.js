@@ -28,6 +28,7 @@ const Pathfind = () => {
     //Inicializace gridu
     const initalizeGrid = () => {
         const grid = [];
+        // console.log(typeof wallCords.y)
 
         //Filling grid with spots
         for (let i = 0; i < rows; i++) {
@@ -37,44 +38,24 @@ const Pathfind = () => {
             }
         }
 
-        if (wallCords.length > 0 && deleteWallCords.length === 0) {
-            console.log("first if is used")
+        if (typeof wallCords.y === "string") {
+            // console.log("working")
             wall.push(wallCords);
+            // console.log(wall)
+            let delY = deleteWallCords[0];
+            let delX = deleteWallCords[1];
 
             wall.forEach((el, idx) => {
-                if (el.length > 0) {
-                    if (grid[el[0]][el[1]].isWall === false) {
-                        grid[el[0]][el[1]].isWall = true;
-                    }
+                console.log(el.isWall)
+                if (grid[el.y][el.x].isWall === false && el.isWall === true) {
+                    grid[el.y][el.x].isWall = true;
+                    // console.log(el)
+                }
+
+                if (grid[el.y][el.x].isWall === true && el.isWall === false) {
+                    grid[el.y][el.x].isWall = false;
                 }
             })
-        }
-
-        if (deleteWallCords.length > 0) {
-            console.log("second if is used")
-            let delY = deleteWallCords[0]
-            let delX = deleteWallCords[1]
-            let index;
-
-            wall.forEach((el, idx) => {
-                if (el.length > 0) {
-                    if (grid[el[0]][el[1]].isWall === false) {
-                        grid[el[0]][el[1]].isWall = true;
-                    }
-                }
-
-                if (grid[delY][delX].isWall === true) {
-                    index = idx;
-                }
-            })
-
-            if (grid[delY][delX].isWall === true) {
-                grid[delY][delX].isWall = false;
-            }
-
-            if (wall[index] !== undefined) {
-                wall[index].splice(0, 2);
-            }
         }
 
         let start = grid[START_ROW][START_COL];
@@ -89,6 +70,13 @@ const Pathfind = () => {
             fillPath(grid, path);
         }
     };
+
+    //wallSpot
+    function wallSpot(y, x, isWall) {
+        this.y = y;
+        this.x = x;
+        this.isWall = isWall;
+    }
 
     // Vytvoreni jednotlivych spotu v gridu
     function Spot(y, x) {
@@ -146,14 +134,22 @@ const Pathfind = () => {
         if (e.target.classList[1] === undefined || e.target.classList[1] === "node_path") {
             let memPos = e.target.id;
             let pos = memPos.split("-");
-            setWallCords(pos);
+            setWallCords(new wallSpot(pos[0], pos[1], true));
         }
 
         if (e.target.classList[1] === "node_wall") {
             let memPos = e.target.id;
             let pos = memPos.split("-");
             setDeleteWallCords(pos);
-            e.target.attributes.class.value = "node ";
+
+            wall.forEach((el) => {
+                // console.log(el);
+                if (el.y === pos[0] && el.x === pos[1]) {
+                    console.log(el)
+                    el.isWall = false;
+                }
+            })
+
         } else {
             e.preventDefault();
         }
