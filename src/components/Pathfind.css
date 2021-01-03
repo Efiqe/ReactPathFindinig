@@ -7,3 +7,7 @@
 .rowWrapper {
     display: flex;
 }
+
+.usedButton {
+    background-color: darkorchid;
+}

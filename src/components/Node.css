@@ -23,3 +23,23 @@
 .node_wall {
     background-color: black;
 }
+
+.node_sand {
+    background-color: yellow;
+}
+
+.node_ice {
+    background-color: blue;
+}
+
+.node_snow {
+    background-color: lightblue;
+}
+
+.node_tree {
+    background-color: darkgreen;
+}
+
+.node_mud {
+    background-color: brown;
+}
