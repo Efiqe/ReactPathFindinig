@@ -1,2 +1,3 @@
 # Pathfinding with ReactJS #
-Funknci BFS algoritmus (moznost pohybu start a end nodu + kresleni steny)
+Funkční BFS algoritmus (možnost kreslení stěn, posouvání start a end nodu)
+Funkční Dijkstrův algoritmus (možnost kreslení stěn, posouvání start a end nodu, kreslení různých prostředí)
