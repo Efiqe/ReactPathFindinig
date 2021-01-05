@@ -295,97 +295,44 @@ const Pathfind = () => {
     }
 
 
+    const chosenSurface = (surface, surfacearr, value, e, setSurfaceCords) => {
+        if (e.target.classList[1] === undefined) {
+            let memPos = e.target.id;
+            let pos = memPos.split("-");
+            setSurfaceCords(new surfaceTypes(pos[0], pos[1], surface, value));
+        }
+        if (e.target.classList[1] === "node_" + surface) {
+            let memPos = e.target.id;
+            let pos = memPos.split("-");
+            setDeleteSurface(pos);
+
+            surfacearr.forEach((el) => {
+                if (el.y === pos[0] && el.x === pos[1]) {
+                    el.surfaceType = "none";
+                }
+            })
+        }
+    }
+
+
     const onClick = (e) => {
         const cond = sand + ice + snow + tree + mud;
 
         if (cond === 1) {
-            if (sand === 1 && e.target.classList[1] === undefined) {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setSandCords(new surfaceTypes(pos[0], pos[1], "sand", 5));
+            if (sand === 1) {
+                chosenSurface("sand", sandSurface, 5, e, setSandCords)
             }
-            if (e.target.classList[1] === "node_sand") {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setDeleteSurface(pos);
-
-                sandSurface.forEach((el) => {
-                    if (el.y === pos[0] && el.x === pos[1]) {
-                        el.surfaceType = "none";
-                    }
-                })
+            if (ice === 1) {
+                chosenSurface("ice", iceSurface, 15, e, setIceCords)
             }
-
-
-            if (ice === 1 && e.target.classList[1] === undefined) {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setIceCords(new surfaceTypes(pos[0], pos[1], "ice", 15));
+            if (snow === 1) {
+                chosenSurface("snow", snowSurface, 10, e, setSnowCords)
             }
-            if (e.target.classList[1] === "node_ice") {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setDeleteSurface(pos);
-
-                iceSurface.forEach((el) => {
-                    if (el.y === pos[0] && el.x === pos[1]) {
-                        el.surfaceType = "none";
-                    }
-                })
+            if (tree === 1) {
+                chosenSurface("tree", treeSurface, 3, e, setTreeCords)
             }
-
-
-            if (snow === 1 && e.target.classList[1] === undefined) {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setSnowCords(new surfaceTypes(pos[0], pos[1], "snow", 10));
-            }
-            if (e.target.classList[1] === "node_snow") {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setDeleteSurface(pos);
-
-                snowSurface.forEach((el) => {
-                    if (el.y === pos[0] && el.x === pos[1]) {
-                        el.surfaceType = "none";
-                    }
-                })
-            }
-
-
-            if (tree === 1 && e.target.classList[1] === undefined) {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setTreeCords(new surfaceTypes(pos[0], pos[1], "tree", 3));
-            }
-            if (e.target.classList[1] === "node_tree") {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setDeleteSurface(pos);
-
-                treeSurface.forEach((el) => {
-                    if (el.y === pos[0] && el.x === pos[1]) {
-                        el.surfaceType = "none";
-                    }
-                })
-            }
-
-
-            if (mud === 1 && e.target.classList[1] === undefined) {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setMudCords(new surfaceTypes(pos[0], pos[1], "mud", 7));
-            }
-            if (e.target.classList[1] === "node_mud") {
-                let memPos = e.target.id;
-                let pos = memPos.split("-");
-                setDeleteSurface(pos);
-
-                mudSurface.forEach((el) => {
-                    if (el.y === pos[0] && el.x === pos[1]) {
-                        el.surfaceType = "none";
-                    }
-                })
+            if (mud === 1) {
+                chosenSurface("mud", mudSurface, 7, e, setMudCords)
             }
         } else {
             if (e.target.classList[1] === undefined || e.target.classList[1] === "node_path" || e.target.classList[1] === "node_sand"
