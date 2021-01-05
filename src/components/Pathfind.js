@@ -18,6 +18,7 @@ let tree = 0;
 let treeSurface = [];
 let mud = 0;
 let mudSurface = [];
+let mouseDown = 0;
 
 
 const Pathfind = () => {
@@ -315,8 +316,9 @@ const Pathfind = () => {
     }
 
 
-    const onClick = (e) => {
+    const onMouseDown = (e) => {
         const cond = sand + ice + snow + tree + mud;
+        mouseDown = 1
 
         if (cond === 1) {
             if (sand === 1) {
@@ -356,6 +358,7 @@ const Pathfind = () => {
             }
         }
     }
+
 
     const onSand = (e) => {
         if (sand === 0) {
@@ -411,33 +414,91 @@ const Pathfind = () => {
         }
     }
 
+
+
+    const onMouseOver = (e) => {
+        const cond = sand + ice + snow + tree + mud;
+
+        if (mouseDown === 1) {
+            if (cond === 1) {
+                if (sand === 1) {
+                    chosenSurface("sand", sandSurface, 5, e, setSandCords)
+                }
+                if (ice === 1) {
+                    chosenSurface("ice", iceSurface, 15, e, setIceCords)
+                }
+                if (snow === 1) {
+                    chosenSurface("snow", snowSurface, 10, e, setSnowCords)
+                }
+                if (tree === 1) {
+                    chosenSurface("tree", treeSurface, 3, e, setTreeCords)
+                }
+                if (mud === 1) {
+                    chosenSurface("mud", mudSurface, 7, e, setMudCords)
+                }
+            } else {
+                if (e.target.classList[1] === undefined || e.target.classList[1] === "node_path" || e.target.classList[1] === "node_sand"
+                    || e.target.classList[1] === "node_ice" || e.target.classList[1] === "node_snow" || e.target.classList[1] === "node_tree"
+                    || e.target.classList[1] === "node_mud") {
+                    let memPos = e.target.id;
+                    let pos = memPos.split("-");
+                    setWallCords(new wallSpot(pos[0], pos[1], true));
+                }
+
+                if (e.target.classList[1] === "node_wall") {
+                    let memPos = e.target.id;
+                    let pos = memPos.split("-");
+                    setDeleteWallCords(pos);
+
+                    wall.forEach((el) => {
+                        if (el.y === pos[0] && el.x === pos[1]) {
+                            el.isWall = false;
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    const onMouseUp = (e) => {
+        if (mouseDown === 1) {
+            mouseDown = 0
+        } else {
+            e.preventDefault();
+        }
+    }
+
     // Funkce na vykresleni gridu
     const gridwithNode = (
         <div className="Grid" onDrop={(e) => (onDrop(e))} onDragOver={(e) => (onDragOver(e))}
-            onClick={(e) => (onClick(e))}
+            onMouseDown={(e) => (onMouseDown(e))}
+            onMouseOver={(e) => (onMouseOver(e))}
+            onMouseUp={(e) => (onMouseUp(e))}
         >
-            {Grid.map((row, rowIndex) => {
-                return (
-                    <div key={rowIndex} className='rowWrapper'>
-                        {row.map((col, colIndex) => {
-                            const { isStart, isEnd, searched, isPath, isWall, surfaceType } = col;
-                            return (
-                                <Node key={colIndex}
-                                    isPath={isPath}
-                                    isWall={isWall}
-                                    isStart={isStart}
-                                    isEnd={isEnd}
-                                    searched={searched}
-                                    row={rowIndex}
-                                    col={colIndex}
-                                    surfaceType={surfaceType}
-                                />
-                            )
-                        })}
-                    </div>
-                )
-            })}
-        </div>
+            {
+                Grid.map((row, rowIndex) => {
+                    return (
+                        <div key={rowIndex} className='rowWrapper'>
+                            {row.map((col, colIndex) => {
+                                const { isStart, isEnd, searched, isPath, isWall, surfaceType } = col;
+                                return (
+                                    <Node key={colIndex}
+                                        isPath={isPath}
+                                        isWall={isWall}
+                                        isStart={isStart}
+                                        isEnd={isEnd}
+                                        searched={searched}
+                                        row={rowIndex}
+                                        col={colIndex}
+                                        surfaceType={surfaceType}
+                                    />
+                                )
+                            })}
+                        </div>
+                    )
+                })
+            }
+        </div >
     )
 
     return (
