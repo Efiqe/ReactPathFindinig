@@ -46,7 +46,6 @@ export const BFS = (grid, start, end) => {
 
     while (queue.length > 0) {
         let current = queue.shift();
-        visited.push(current);
 
         if (current === end) {
             console.log("Found");

@@ -3,10 +3,12 @@ import Node from './Node';
 import './Pathfind.css';
 import { BFS, drawPath } from '../Algorithms/Bfs';
 import { Dijkstra, showDijkstra } from '../Algorithms/Dijkstra';
+import { Astar, showAstar } from '../Algorithms/Astar';
+
 
 //GLOBAL
-const cols = 10;
-const rows = 10;
+const cols = 38;
+const rows = 18;
 let wall = [];
 let sand = 0;
 let sandSurface = [];
@@ -35,6 +37,8 @@ const Pathfind = () => {
     const [treeCords, setTreeCords] = useState([]);
     const [mudCords, setMudCords] = useState([]);
     const [deleteSurface, setDeleteSurface] = useState([]);
+    const [allDeleted, setAllDeleted] = useState(0);
+    const [toggleAstar, setToggleAstar] = useState(0);
 
 
     const START_ROW = startCords[0];
@@ -45,8 +49,8 @@ const Pathfind = () => {
 
     useEffect(() => {
         initalizeGrid();
-    }, [toggleBFS, toggleDijkstra, startCords, endCords, wallCords,
-        deleteWallCords, sandCords, iceCords, snowCords, treeCords, mudCords, deleteSurface]);
+    }, [toggleBFS, toggleDijkstra, toggleAstar, startCords, endCords, wallCords,
+        deleteWallCords, sandCords, iceCords, snowCords, treeCords, mudCords, deleteSurface, allDeleted]);
 
 
     //Inicializace gridu
@@ -68,6 +72,10 @@ const Pathfind = () => {
         //Dijkstruv algoritmus
         if (toggleDijkstra === 1) {
             DijkstraAlg(grid);
+        }
+        //Astart algoritmus
+        if (toggleAstar === 1) {
+            AstarAlg(grid);
         } else {
             setGrid(grid);
             drawingWalls(grid);
@@ -102,6 +110,7 @@ const Pathfind = () => {
                 if (grid[el.y][el.x].surfaceType === "none" && el.surfaceType !== "none") {
                     grid[el.y][el.x].surfaceType = el.surfaceType;
                     grid[el.y][el.x].weight = el.weight;
+                    grid[el.y][el.x].Fcost = el.Fcost;
                 }
 
                 if (grid[el.y][el.x].surfaceType !== "none" && el.surfaceType === "none") {
@@ -118,6 +127,7 @@ const Pathfind = () => {
                 if (grid[el.y][el.x].surfaceType === "none" && el.surfaceType !== "none") {
                     grid[el.y][el.x].surfaceType = el.surfaceType;
                     grid[el.y][el.x].weight = el.weight;
+                    grid[el.y][el.x].Fcost = el.Fcost;
                 }
 
                 if (grid[el.y][el.x].surfaceType !== "none" && el.surfaceType === "none") {
@@ -134,6 +144,7 @@ const Pathfind = () => {
                 if (grid[el.y][el.x].surfaceType === "none" && el.surfaceType !== "none") {
                     grid[el.y][el.x].surfaceType = el.surfaceType;
                     grid[el.y][el.x].weight = el.weight;
+                    grid[el.y][el.x].Fcost = el.Fcost;
                 }
 
                 if (grid[el.y][el.x].surfaceType !== "none" && el.surfaceType === "none") {
@@ -150,6 +161,7 @@ const Pathfind = () => {
                 if (grid[el.y][el.x].surfaceType === "none" && el.surfaceType !== "none") {
                     grid[el.y][el.x].surfaceType = el.surfaceType;
                     grid[el.y][el.x].weight = el.weight;
+                    grid[el.y][el.x].Fcost = el.Fcost;
                 }
 
                 if (grid[el.y][el.x].surfaceType !== "none" && el.surfaceType === "none") {
@@ -166,6 +178,7 @@ const Pathfind = () => {
                 if (grid[el.y][el.x].surfaceType === "none" && el.surfaceType !== "none") {
                     grid[el.y][el.x].surfaceType = el.surfaceType;
                     grid[el.y][el.x].weight = el.weight;
+                    grid[el.y][el.x].Fcost = el.Fcost;
                 }
 
                 if (grid[el.y][el.x].surfaceType !== "none" && el.surfaceType === "none") {
@@ -209,6 +222,21 @@ const Pathfind = () => {
         fillPath(grid, path);
     }
 
+    const AstarAlg = (grid) => {
+        drawingWalls(grid);
+        drawingSurfaces(grid);
+
+        let start = grid[START_ROW][START_COL];
+        let end = grid[END_ROW][END_COL];
+
+        setGrid(grid);
+
+        const dict = Astar(grid, start, end);
+        const path = showAstar(dict, [start.y, start.x], [end.y, end.x])
+
+        fillPath(grid, path);
+    }
+
 
     //Vytvoreni objektu pro kresleni sten
     function wallSpot(y, x, isWall) {
@@ -219,11 +247,12 @@ const Pathfind = () => {
 
 
     //Objekt porvrchu
-    function surfaceTypes(y, x, type, weight) {
+    function surfaceTypes(y, x, type, weight, Fcost) {
         this.y = y;
         this.x = x;
         this.surfaceType = type;
         this.weight = weight;
+        this.Fcost = Fcost;
     }
 
 
@@ -238,6 +267,9 @@ const Pathfind = () => {
         this.isWall = false;
         this.surfaceType = "none";
         this.weight = 1;
+        this.Gcost = 0;
+        this.Hcost = 0;
+        this.Fcost = this.Gcost + this.Hcost;
     };
 
 
@@ -277,30 +309,11 @@ const Pathfind = () => {
     }
 
 
-    const startBFS = (e) => {
-        setToggleBFS(1)
-    }
-
-
-    const endBFS = (e) => {
-        setToggleBFS(0)
-    }
-
-
-    const startDijkstra = (e) => {
-        setToggleDijkstra(1);
-    }
-
-    const endDijkstra = (e) => {
-        setToggleDijkstra(0);
-    }
-
-
-    const chosenSurface = (surface, surfacearr, value, e, setSurfaceCords) => {
+    const chosenSurface = (surface, surfacearr, weight, e, setSurfaceCords, Fcost) => {
         if (e.target.classList[1] === undefined) {
             let memPos = e.target.id;
             let pos = memPos.split("-");
-            setSurfaceCords(new surfaceTypes(pos[0], pos[1], surface, value));
+            setSurfaceCords(new surfaceTypes(pos[0], pos[1], surface, weight, Fcost));
         }
         if (e.target.classList[1] === "node_" + surface) {
             let memPos = e.target.id;
@@ -320,26 +333,26 @@ const Pathfind = () => {
         const cond = sand + ice + snow + tree + mud;
         mouseDown = 1
 
-        if (cond === 1) {
-            if (sand === 1) {
-                chosenSurface("sand", sandSurface, 5, e, setSandCords)
-            }
-            if (ice === 1) {
-                chosenSurface("ice", iceSurface, 15, e, setIceCords)
-            }
-            if (snow === 1) {
-                chosenSurface("snow", snowSurface, 10, e, setSnowCords)
-            }
-            if (tree === 1) {
-                chosenSurface("tree", treeSurface, 3, e, setTreeCords)
-            }
-            if (mud === 1) {
-                chosenSurface("mud", mudSurface, 7, e, setMudCords)
+        if (cond > 0) {
+            switch (cond) {
+                case 1:
+                    chosenSurface("sand", sandSurface, 5, e, setSandCords, 5);
+                    break;
+                case 2:
+                    chosenSurface("ice", iceSurface, 15, e, setIceCords, 15);
+                    break;
+                case 3:
+                    chosenSurface("snow", snowSurface, 10, e, setSnowCords, 10)
+                    break;
+                case 4:
+                    chosenSurface("tree", treeSurface, 3, e, setTreeCords, 3);
+                    break;
+                case 5:
+                    chosenSurface("mud", mudSurface, 7, e, setMudCords, 7);
+                    break;
             }
         } else {
-            if (e.target.classList[1] === undefined || e.target.classList[1] === "node_path" || e.target.classList[1] === "node_sand"
-                || e.target.classList[1] === "node_ice" || e.target.classList[1] === "node_snow" || e.target.classList[1] === "node_tree"
-                || e.target.classList[1] === "node_mud") {
+            if (e.target.classList[1] === undefined || e.target.classList[1] === "node_") {
                 let memPos = e.target.id;
                 let pos = memPos.split("-");
                 setWallCords(new wallSpot(pos[0], pos[1], true));
@@ -360,81 +373,78 @@ const Pathfind = () => {
     }
 
 
-    const onSand = (e) => {
-        if (sand === 0) {
-            sand = 1;
-            e.target.className = "usedButton";
-        } else {
-            sand = 0;
-            e.target.className = "defButton";
+    const onSuerface = (e) => {
+        switch (e.target.name) {
+            case "Sand":
+                if(sand === 0) {
+                    sand = 1;
+                    e.target.className = "usedButton";
+                } else {
+                    sand = 0;
+                    e.target.className = "defButton";
+                }       
+                break;
+            case "Ice":
+                if(ice === 0) {
+                    ice = 2;
+                    e.target.className = "usedButton";
+                } else {
+                    ice = 0;
+                    e.target.className = "defButton";
+                }       
+                break;
+            case "Snow":
+                if(snow === 0) {
+                    snow = 3;
+                    e.target.className = "usedButton";
+                } else {
+                    snow = 0;
+                    e.target.className = "defButton";
+                }       
+                break;
+            case "Tree":
+                if(tree === 0) {
+                    tree = 4;
+                    e.target.className = "usedButton";
+                } else {
+                    tree = 0;
+                    e.target.className = "defButton";
+                }       
+                break;
+            case "Mud":
+                if(mud === 0) {
+                    mud = 5;
+                    e.target.className = "usedButton";
+                } else {
+                    mud = 0;
+                    e.target.className = "defButton";
+                }       
+                break;
         }
     }
-
-
-    const onIce = (e) => {
-        if (ice === 0) {
-            ice = 1;
-            e.target.className = "usedButton";
-        } else {
-            ice = 0;
-            e.target.className = "defButton";
-        }
-    }
-
-
-    const onSnow = (e) => {
-        if (snow === 0) {
-            snow = 1;
-            e.target.className = "usedButton";
-        } else {
-            snow = 0;
-            e.target.className = "defButton";
-        }
-    }
-
-
-    const onTree = (e) => {
-        if (tree === 0) {
-            tree = 1;
-            e.target.className = "usedButton";
-        } else {
-            tree = 0;
-            e.target.className = "defButton";
-        }
-    }
-
-
-    const onMud = (e) => {
-        if (mud === 0) {
-            mud = 1;
-            e.target.className = "usedButton";
-        } else {
-            mud = 0;
-            e.target.className = "defButton";
-        }
-    }
-
 
 
     const onMouseOver = (e) => {
         const cond = sand + ice + snow + tree + mud;
 
         if (mouseDown === 1) {
-            if (cond === 1) {
-                if (sand === 1) {
-                    chosenSurface("sand", sandSurface, 5, e, setSandCords)
-                }
-                if (ice === 1) {
-                    chosenSurface("ice", iceSurface, 15, e, setIceCords)
-                }
-                if (snow === 1) {
-                    chosenSurface("snow", snowSurface, 10, e, setSnowCords)
-                }
-                if (tree === 1) {
-                    chosenSurface("tree", treeSurface, 3, e, setTreeCords)
-                }
-                if (mud === 1) {
-                    chosenSurface("mud", mudSurface, 7, e, setMudCords)
+            if (cond > 0) {
+                switch (cond) {
+                    case 1:
+                        chosenSurface("sand", sandSurface, 5, e, setSandCords);
+                        break;
+                    case 2:
+                        chosenSurface("ice", iceSurface, 15, e, setIceCords);
+                        break;
+                    case 3:
+                        chosenSurface("snow", snowSurface, 10, e, setSnowCords);
+                        break;
+                    case 4:
+                        chosenSurface("tree", treeSurface, 3, e, setTreeCords);
+                        break;
+                    case 5:
+                        chosenSurface("mud", mudSurface, 7, e, setMudCords);
+                        break;
                 }
             } else {
                 if (e.target.classList[1] === undefined || e.target.classList[1] === "node_path" || e.target.classList[1] === "node_sand"
@@ -460,6 +470,7 @@ const Pathfind = () => {
         }
     }
 
+
     const onMouseUp = (e) => {
         if (mouseDown === 1) {
             mouseDown = 0
@@ -467,6 +478,44 @@ const Pathfind = () => {
             e.preventDefault();
         }
     }
+
+
+    const deleteAll = () => {
+        wall.forEach((el) => {
+            el.isWall = false;
+        })
+
+        sandSurface.forEach((el) => {
+            el.surfaceType = "none"
+        })
+
+
+        iceSurface.forEach((el) => {
+            el.surfaceType = "none"
+        })
+
+
+        snowSurface.forEach((el) => {
+            el.surfaceType = "none"
+        })
+
+
+        treeSurface.forEach((el) => {
+            el.surfaceType = "none"
+        })
+
+
+        mudSurface.forEach((el) => {
+            el.surfaceType = "none"
+        })
+
+        if (allDeleted === 0) {
+            setAllDeleted(1)
+        } else {
+            setAllDeleted(0)
+        }
+    }
+
 
     // Funkce na vykresleni gridu
     const gridwithNode = (
@@ -501,27 +550,35 @@ const Pathfind = () => {
         </div >
     )
 
+
     return (
         <div className='Wrapper'>
             <h1>Pathfinding</h1>
             {/* Vykresleni gridu */}
             {gridwithNode}
             <div>
-                <button onClick={(e) => startBFS(e)}>Zapni BFS</button>
-                <button onClick={(e) => endBFS(e)}>Vypni BFS</button>
+                <button onClick={() => setToggleBFS(1)}>Zapni BFS</button>
+                <button onClick={() => {if(toggleBFS === 1) {setToggleBFS(0)}}}>Vypni BFS</button>
             </div>
             <div>
-                <button onClick={(e) => startDijkstra(e)}>Zapni Dijkstru</button>
-                <button onClick={(e) => endDijkstra(e)}>Vypni Dijkstru</button>
+                <button onClick={() => setToggleDijkstra(1)}>Zapni Dijkstru</button>
+                <button onClick={() => {if(toggleDijkstra === 1) {setToggleDijkstra(0)}}}>Vypni Dijkstru</button>
             </div>
             <div>
-                <button onClick={(e) => onSand(e)} className="defButton">Pisek</button>
-                <button onClick={(e) => onIce(e)} className="defButton">Led</button>
-                <button onClick={(e) => onSnow(e)} className="defButton">Snih</button>
-                <button onClick={(e) => onTree(e)} className="defButton">Stromy</button>
-                <button onClick={(e) => onMud(e)} className="defButton">Bahno</button>
+                <button onClick={() => setToggleAstar(1)}>Zapni Astar</button>
+                <button onClick={() => {if(toggleAstar === 1) {setToggleAstar(0)}}}>Vypni Astar</button>
             </div>
-        </div >
+            <div>
+                <button onClick={(e) => onSuerface(e)} className="defButton" name="Sand">Pisek</button>
+                <button onClick={(e) => onSuerface(e)} className="defButton" name="Ice">Led</button>
+                <button onClick={(e) => onSuerface(e)} className="defButton" name="Snow">Snih</button>
+                <button onClick={(e) => onSuerface(e)} className="defButton" name="Tree">Stromy</button>
+                <button onClick={(e) => onSuerface(e)} className="defButton"name="Mud">Bahno</button>
+            </div>
+            <div>
+                <button onClick={() => { deleteAll() }}>Delete ALL</button>
+            </div>
+        </div>
     )
 }
 
