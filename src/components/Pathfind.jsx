@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import Node from './Node';
+import Node from './Node.jsx';
 import './Pathfind.css';
 import { BFS, drawPath } from '../Algorithms/Bfs';
 import { Dijkstra, showDijkstra } from '../Algorithms/Dijkstra';
 import { Astar, showAstar } from '../Algorithms/Astar';
+import axios from 'axios';
+import ClearIcon from '@material-ui/icons/Clear';
+import DoneIcon from '@material-ui/icons/Done';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 
 //GLOBAL
-const cols = 38;
-const rows = 18;
+const cols = 27;
+const rows = 20;
 let wall = [];
 let sand = 0;
 let sandSurface = [];
@@ -39,6 +43,9 @@ const Pathfind = () => {
     const [deleteSurface, setDeleteSurface] = useState([]);
     const [allDeleted, setAllDeleted] = useState(0);
     const [toggleAstar, setToggleAstar] = useState(0);
+    const [path, setPath] = useState(null);
+    const [sendData, setSendData] = useState(0);
+
 
 
     const START_ROW = startCords[0];
@@ -48,13 +55,28 @@ const Pathfind = () => {
 
 
     useEffect(() => {
-        initalizeGrid();
+        initializeGrid();
     }, [toggleBFS, toggleDijkstra, toggleAstar, startCords, endCords, wallCords,
         deleteWallCords, sandCords, iceCords, snowCords, treeCords, mudCords, deleteSurface, allDeleted]);
 
+    useEffect(() => {
+        sendPath();
+    }, [sendData]);
+
+    const sendPath = async() => {
+        console.log("funguje");
+        let res = await axios.post('http://localhost:5000/sendPath', {
+            "path": path 
+        })
+
+        console.log(res);
+
+        setPath(null)
+    }
+   
 
     //Inicializace gridu
-    const initalizeGrid = () => {
+    const initializeGrid = () => {
         const grid = [];
 
         //Naplneni gridu(grafu)
@@ -200,6 +222,7 @@ const Pathfind = () => {
 
         const dict = BFS(grid, start, end);
         const path = drawPath(dict, [start.y, start.x], [end.y, end.x]);
+        setPath(path);
         console.log(path)
 
         fillPath(grid, path);
@@ -218,6 +241,7 @@ const Pathfind = () => {
 
         const dict = Dijkstra(grid, start, end);
         const path = showDijkstra(dict, [start.y, start.x], [end.y, end.x]);
+        setPath(path);
 
         fillPath(grid, path);
     }
@@ -233,6 +257,7 @@ const Pathfind = () => {
 
         const dict = Astar(grid, start, end);
         const path = showAstar(dict, [start.y, start.x], [end.y, end.x])
+        setPath(path);
 
         fillPath(grid, path);
     }
@@ -378,46 +403,46 @@ const Pathfind = () => {
             case "Sand":
                 if(sand === 0) {
                     sand = 1;
-                    e.target.className = "usedButton";
+                    e.target.className = "usedSand";
                 } else {
                     sand = 0;
-                    e.target.className = "defButton";
+                    e.target.className = "sand";
                 }       
                 break;
             case "Ice":
                 if(ice === 0) {
                     ice = 2;
-                    e.target.className = "usedButton";
+                    e.target.className = "usedIce";
                 } else {
                     ice = 0;
-                    e.target.className = "defButton";
+                    e.target.className = "ice";
                 }       
                 break;
             case "Snow":
                 if(snow === 0) {
                     snow = 3;
-                    e.target.className = "usedButton";
+                    e.target.className = "usedSnow";
                 } else {
                     snow = 0;
-                    e.target.className = "defButton";
+                    e.target.className = "snow";
                 }       
                 break;
             case "Tree":
                 if(tree === 0) {
                     tree = 4;
-                    e.target.className = "usedButton";
+                    e.target.className = "usedTree";
                 } else {
                     tree = 0;
-                    e.target.className = "defButton";
+                    e.target.className = "tree";
                 }       
                 break;
             case "Mud":
                 if(mud === 0) {
                     mud = 5;
-                    e.target.className = "usedButton";
+                    e.target.className = "usedMud";
                 } else {
                     mud = 0;
-                    e.target.className = "defButton";
+                    e.target.className = "mud";
                 }       
                 break;
         }
@@ -517,6 +542,15 @@ const Pathfind = () => {
     }
 
 
+    const onSendData = () => {
+        if(sendData === 0) {
+            setSendData(1)
+        } else {
+            setSendData(0);
+        }
+    }
+
+
     // Funkce na vykresleni gridu
     const gridwithNode = (
         <div className="Grid" onDrop={(e) => (onDrop(e))} onDragOver={(e) => (onDragOver(e))}
@@ -532,51 +566,56 @@ const Pathfind = () => {
                                 const { isStart, isEnd, searched, isPath, isWall, surfaceType } = col;
                                 return (
                                     <Node key={colIndex}
-                                        isPath={isPath}
-                                        isWall={isWall}
-                                        isStart={isStart}
-                                        isEnd={isEnd}
-                                        searched={searched}
-                                        row={rowIndex}
-                                        col={colIndex}
-                                        surfaceType={surfaceType}
+                                    isPath={isPath}
+                                    isWall={isWall}
+                                    isStart={isStart}
+                                    isEnd={isEnd}
+                                    searched={searched}
+                                    row={rowIndex}
+                                    col={colIndex}
+                                    surfaceType={surfaceType}
                                     />
-                                )
-                            })}
+                                    )
+                                })}
                         </div>
                     )
                 })
             }
         </div >
     )
-
-
+    
+    
     return (
         <div className='Wrapper'>
-            <h1>Pathfinding</h1>
+            <h1>Nejkratší cesta přes 2D pole</h1>
             {/* Vykresleni gridu */}
             {gridwithNode}
-            <div>
-                <button onClick={() => setToggleBFS(1)}>Zapni BFS</button>
-                <button onClick={() => {if(toggleBFS === 1) {setToggleBFS(0)}}}>Vypni BFS</button>
+            <div className="algButtons">
+                <div className="BFSbuttons">
+                    <button className="bfsOn" onClick={() => setToggleBFS(1)}>Zapni BFS</button>
+                    <button className="bfsOff" onClick={() => {if(toggleBFS === 1) {setToggleBFS(0)}}}>Vypni BFS</button>
+                </div>
+                <div className="dijkstraButtons">
+                    <button className="dijkstraOn" onClick={() => setToggleDijkstra(1)}>Zapni Dijkstru</button>
+                    <button className="dijkstraOff" onClick={() => {if(toggleDijkstra === 1) {setToggleDijkstra(0)}}}>Vypni Dijkstru</button>
+                </div>
+                <div className="astarButtons">
+                    <button className="astarOn" onClick={() => setToggleAstar(1)}>Zapni Astar</button>
+                    <button className="astarOff" onClick={() => {if(toggleAstar === 1) {setToggleAstar(0)}}}>Vypni Astar</button>
+                </div>
             </div>
-            <div>
-                <button onClick={() => setToggleDijkstra(1)}>Zapni Dijkstru</button>
-                <button onClick={() => {if(toggleDijkstra === 1) {setToggleDijkstra(0)}}}>Vypni Dijkstru</button>
-            </div>
-            <div>
-                <button onClick={() => setToggleAstar(1)}>Zapni Astar</button>
-                <button onClick={() => {if(toggleAstar === 1) {setToggleAstar(0)}}}>Vypni Astar</button>
-            </div>
-            <div>
-                <button onClick={(e) => onSuerface(e)} className="defButton" name="Sand">Pisek</button>
-                <button onClick={(e) => onSuerface(e)} className="defButton" name="Ice">Led</button>
-                <button onClick={(e) => onSuerface(e)} className="defButton" name="Snow">Snih</button>
-                <button onClick={(e) => onSuerface(e)} className="defButton" name="Tree">Stromy</button>
-                <button onClick={(e) => onSuerface(e)} className="defButton"name="Mud">Bahno</button>
-            </div>
-            <div>
-                <button onClick={() => { deleteAll() }}>Delete ALL</button>
+            <div className="utilityButtons">
+                <div className="surfaceButtons">
+                    <button className="sand" onClick={(e) => onSuerface(e)} name="Sand">Písek</button>
+                    <button className="ice" onClick={(e) => onSuerface(e)} name="Ice">Led</button>
+                    <button className="snow" onClick={(e) => onSuerface(e)} name="Snow">Sníh</button>
+                    <button className="tree" onClick={(e) => onSuerface(e)} name="Tree">Stromy</button>
+                    <button className="mud" onClick={(e) => onSuerface(e)} name="Mud">Bahno</button>
+                </div>
+                <div className="delButtons">
+                    <button className="deleteAll" onClick={() => { deleteAll() }}>Delete ALL <ClearIcon className="clearIcon"/></button>
+                    <button className="sendData" onClick={() => { onSendData() }}>Send Data <DoneIcon className="doneIcon"/></button>
+                </div>
             </div>
         </div>
     )

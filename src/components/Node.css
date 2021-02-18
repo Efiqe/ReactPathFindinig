@@ -1,45 +1,55 @@
 .node {
-    width: 40px;
-    height: 40px;
-    border: 1px solid black;
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
 }
 
 .node_start {
-    background-color: green;
+  background-color: green;
 }
 
 .node_end {
-    background-color: red;
+  background-color: red;
 }
 
-.node_searched  {
-    background-color: lightgray;
+.node_searched {
+  background-color: lightgray;
 }
 
 .node_path {
-    background-color: deeppink;
+  background-color: green;
+  opacity: 50%;
 }
 
 .node_wall {
-    background-color: black;
+  background-color: black;
 }
 
 .node_sand {
-    background-color: yellow;
+  /* background-color: sandybrown; */
+  background-image: url(./images/sand.jpeg);
 }
 
 .node_ice {
-    background-color: blue;
+  /* background-color: #e9e9ec; */
+  background-image: url(./images/ice.jpg);
+  background-position-x: center;
 }
 
 .node_snow {
-    background-color: lightblue;
+  /* background-color: #fff8e6; */
+  background-image: url(./images/snowflake.jpeg);
+  background-position-x: center;
 }
 
 .node_tree {
-    background-color: darkgreen;
+  /* background-color: #bddb35; */
+  background-image: url(./images/tree.png);
+  background-repeat: no-repeat;
+  background-position-x: center;
 }
 
 .node_mud {
-    background-color: brown;
+  /* background-color: #70543e; */
+  background-image: url(./images/mud.jpeg);
 }

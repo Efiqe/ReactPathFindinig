@@ -10,6 +10,22 @@ const Node = ({ isStart, isEnd, searched, isPath, row, col, isWall, surfaceType 
             return "node_end";
         }
         if (isPath) {
+            if (surfaceType === "sand") {
+                return "node_path node_sand";
+            }
+            if (surfaceType === "ice") {
+                return "node_path node_ice";
+            }
+            if (surfaceType === "snow") {
+                return "node_path node_snow";
+            }
+            if (surfaceType === "tree") {
+                return "node_path node_tree";
+            }
+            if (surfaceType === "mud") {
+                return "node_path node_mud";
+            }
+
             return "node_path";
         }
         if (isWall) {
@@ -33,7 +49,6 @@ const Node = ({ isStart, isEnd, searched, isPath, row, col, isWall, surfaceType 
             return "";
         }
     }
-
 
     const classes = selClass();
     const draggAble = isStart ? true : isEnd ? true : false;

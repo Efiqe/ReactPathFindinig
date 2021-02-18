@@ -54,31 +54,31 @@ class PriorityQueue {
 }
 
 
-const findNeighbors = (grid, cord) => {
-    let neighbors = [];
+const findNeighbours = (grid, cord) => {
+    let neighbours = [];
 
     //Nahoru
     if (cord[0] + 1 < grid.length) {
-        neighbors.push([cord[0] + 1, cord[1]])
+        neighbours.push([cord[0] + 1, cord[1]])
     }
 
     //Dolu
     if (cord[0] - 1 >= 0) {
-        neighbors.push([cord[0] - 1, cord[1]])
+        neighbours.push([cord[0] - 1, cord[1]])
     }
 
     //Doleva
     if (cord[1] - 1 >= 0) {
-        neighbors.push([cord[0], cord[1] - 1])
+        neighbours.push([cord[0], cord[1] - 1])
     }
 
     //Doprava
     if (cord[1] + 1 < grid[0].length) {
-        neighbors.push([cord[0], cord[1] + 1])
+        neighbours.push([cord[0], cord[1] + 1])
     }
 
 
-    return neighbors;
+    return neighbours;
 }
 
 
@@ -104,9 +104,9 @@ export const Astar = (grid, start, end) => {
             console.log("Found");
             break;
         } else {
-            let neighbors = findNeighbors(grid, [current.y, current.x]);
+            let neighbours = findNeighbours(grid, [current.y, current.x]);
 
-            neighbors.forEach(el => {
+            neighbours.forEach(el => {
                 let mem = grid[el[0]][el[1]];
 
                 if (mem.searched === false && mem.isWall === false) {
