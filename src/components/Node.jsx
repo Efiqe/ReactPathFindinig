@@ -2,6 +2,19 @@ import React from 'react';
 import './Node.css';
 
 const Node = ({ isStart, isEnd, searched, isPath, row, col, isWall, surfaceType }) => {
+
+    // let nodeObj = {
+    //     "isStart": isStart,
+    //     "isEnd": isEnd,
+    //     "isPath": isPath,
+    //     "isWall": isWall,
+    //     "surfaceType": surfaceType,
+    // }
+
+
+    // let nodeArr = [isStart, isEnd, isPath, isWall, surfaceType]
+
+
     const selClass = () => {
         if (isStart) {
             return "node_start";

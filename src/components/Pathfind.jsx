@@ -7,7 +7,6 @@ import { Astar, showAstar } from '../Algorithms/Astar';
 import axios from 'axios';
 import ClearIcon from '@material-ui/icons/Clear';
 import DoneIcon from '@material-ui/icons/Done';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 
 //GLOBAL
@@ -375,6 +374,8 @@ const Pathfind = () => {
                 case 5:
                     chosenSurface("mud", mudSurface, 7, e, setMudCords, 7);
                     break;
+                default:
+                    console.log("Nothing selected");
             }
         } else {
             if (e.target.classList[1] === undefined || e.target.classList[1] === "node_") {
@@ -445,6 +446,8 @@ const Pathfind = () => {
                     e.target.className = "mud";
                 }       
                 break;
+            default:
+                console.log("Nothing selected");
         }
     }
 
@@ -470,6 +473,8 @@ const Pathfind = () => {
                     case 5:
                         chosenSurface("mud", mudSurface, 7, e, setMudCords);
                         break;
+                    default:
+                        console.log("Nothing selected");
                 }
             } else {
                 if (e.target.classList[1] === undefined || e.target.classList[1] === "node_path" || e.target.classList[1] === "node_sand"

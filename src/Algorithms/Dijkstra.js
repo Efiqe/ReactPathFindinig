@@ -118,7 +118,7 @@ export const showDijkstra = (dict, start, end) => {
     let curPos = end;
     const result = [];
 
-    console.log(dict)
+    // console.log(dict)
 
     while (!equal(curPos, start)) {
         result.push(curPos);

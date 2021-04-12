@@ -36,6 +36,7 @@ const findNeighbours = (grid, cord) => {
     return neighbours;
 }
 
+
 export const BFS = (grid, start, end) => {
     let queue = []
     start.searched = true
