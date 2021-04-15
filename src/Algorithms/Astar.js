@@ -93,7 +93,7 @@ export const Astar = (grid, start, end) => {
     start.searched = true;
     start.Gcost = 0;
     start.Hcost = heuristic(end, start);
-    start.Fcost = start.Gcost + start.Hcost
+    start.Fcost = start.Gcost + start.Hcost;
     PQ.enqueue(start, start.Fcost);
 
     while (PQ.items.length > 0) {
@@ -107,14 +107,15 @@ export const Astar = (grid, start, end) => {
             let neighbours = findNeighbours(grid, [current.y, current.x]);
 
             neighbours.forEach(el => {
-                let mem = grid[el[0]][el[1]];
+                let nb = grid[el[0]][el[1]];
 
-                if (mem.searched === false && mem.isWall === false) {
-                    mem.searched = true;
-                    mem.Gcost = current.Gcost + 10;
-                    mem.Hcost = heuristic(end, current);
-                    mem.Fcost = mem.Gcost + mem.Hcost + mem.Fcost;
-                    PQ.enqueue(mem, mem.Fcost);
+                if (nb.searched === false && nb.isWall === false) {
+                    nb.searched = true;
+                    nb.Gcost = current.Gcost + 10;
+                    nb.Hcost = heuristic(end, current);
+                    nb.Fcost = nb.weight + nb.Gcost + nb.Hcost;
+                    // console.log(nb);
+                    PQ.enqueue(nb, nb.Fcost);
                     dict[[el[0], el[1]]] = [current.y, current.x]
                 }
             })

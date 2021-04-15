@@ -44,6 +44,8 @@ const Pathfind = () => {
     const [toggleAstar, setToggleAstar] = useState(0);
     const [path, setPath] = useState(null);
     const [sendData, setSendData] = useState(0);
+    const [totalWeightDijkstra, setTotalWeightDijkstra] = useState(0);
+    const [totalWeightAstar, setTotalWeightAstar] = useState(0);
 
 
 
@@ -210,6 +212,42 @@ const Pathfind = () => {
     }
 
 
+    const findV2 = (arr, searchVal) => {
+        let output;
+        
+        arr.forEach((e) => {
+            e.forEach((e) => {
+                if(e.x === searchVal[1] && e.y === searchVal[0]) {
+                    output = e;
+                }
+            })
+        })
+    
+        return output;
+    }
+
+
+    const totalWeightFun = (grid, path, alg) => {
+        const totalWeightArr = [];
+
+        if(alg === "Dijkstra") {
+            path.forEach((e) => {
+                const found = findV2(grid, e);
+                totalWeightArr.push(found.weight);
+            })
+        } 
+        
+        if(alg === "Astar") {
+            path.forEach((e) => {
+                const found = findV2(grid, e);
+                totalWeightArr.push(found.Fcost);
+            })
+        }
+
+        return totalWeightArr.reduce((a, b) => a + b);
+    }
+
+
     //Implementace BFS
     const BFSalg = (grid) => {
         drawingWalls(grid);
@@ -243,6 +281,10 @@ const Pathfind = () => {
         setPath(path);
 
         fillPath(grid, path);
+
+        const totalWeight = totalWeightFun(grid, path, "Dijkstra");
+        setTotalWeightDijkstra(totalWeight);
+        console.log(totalWeight);
     }
 
     const AstarAlg = (grid) => {
@@ -259,6 +301,10 @@ const Pathfind = () => {
         setPath(path);
 
         fillPath(grid, path);
+
+        const totalWeight = totalWeightFun(grid, path,"Astar");
+        setTotalWeightAstar(totalWeight);
+        console.log(totalWeight);
     }
 
 
@@ -333,12 +379,13 @@ const Pathfind = () => {
     }
 
 
-    const chosenSurface = (surface, surfacearr, weight, e, setSurfaceCords, Fcost) => {
+    const chosenSurface = (surface, surfacearr, weight, e, setSurfaceCords) => {
         if (e.target.classList[1] === undefined) {
             let memPos = e.target.id;
             let pos = memPos.split("-");
-            setSurfaceCords(new surfaceTypes(pos[0], pos[1], surface, weight, Fcost));
+            setSurfaceCords(new surfaceTypes(pos[0], pos[1], surface, weight));
         }
+
         if (e.target.classList[1] === "node_" + surface) {
             let memPos = e.target.id;
             let pos = memPos.split("-");
@@ -360,19 +407,19 @@ const Pathfind = () => {
         if (cond > 0) {
             switch (cond) {
                 case 1:
-                    chosenSurface("sand", sandSurface, 5, e, setSandCords, 5);
+                    chosenSurface("sand", sandSurface, 5, e, setSandCords);
                     break;
                 case 2:
-                    chosenSurface("ice", iceSurface, 15, e, setIceCords, 15);
+                    chosenSurface("ice", iceSurface, 15, e, setIceCords);
                     break;
                 case 3:
-                    chosenSurface("snow", snowSurface, 10, e, setSnowCords, 10)
+                    chosenSurface("snow", snowSurface, 10, e, setSnowCords)
                     break;
                 case 4:
-                    chosenSurface("tree", treeSurface, 3, e, setTreeCords, 3);
+                    chosenSurface("tree", treeSurface, 3, e, setTreeCords);
                     break;
                 case 5:
-                    chosenSurface("mud", mudSurface, 7, e, setMudCords, 7);
+                    chosenSurface("mud", mudSurface, 7, e, setMudCords);
                     break;
                 default:
                     console.log("Nothing selected");
@@ -620,6 +667,14 @@ const Pathfind = () => {
                 <div className="delButtons">
                     <button className="deleteAll" onClick={() => { deleteAll() }}>Delete ALL <ClearIcon className="clearIcon"/></button>
                     <button className="sendData" onClick={() => { onSendData() }}>Send Data <DoneIcon className="doneIcon"/></button>
+                </div>
+                <div className="totalWeights">
+                    <div className="totalDijkstra">
+                        { toggleDijkstra === 1 ? totalWeightDijkstra/100 : 0 }
+                    </div>
+                    <div className="totalAstar">
+                        { toggleAstar === 1 ? totalWeightAstar/100 : 0 }
+                    </div>
                 </div>
             </div>
         </div>
